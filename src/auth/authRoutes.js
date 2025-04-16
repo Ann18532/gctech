@@ -32,7 +32,6 @@ router.get('/success', (req, res) => {
 
   res.json({
     message: "Login successful",
-    token,
     user: req.user
   });
 });
@@ -47,8 +46,21 @@ router.get('/logout', (req, res) => {
 
 // Dev-only: Get current session token
 router.get('/token', (req, res) => {
+  const token = req.query.token;
+
+  if (!token) {
+    return res.status(400).send("Token is missing");
+  }
+
+  // Set the token as a cookie
+  res.cookie('auth_token', token, {
+    httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
+    secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+    maxAge: 3600000 // 1 hour
+  });
+
   res.json({
-    token: req.query.token,
+    message: "Token set as cookie",
     user: req.user
   });
 });

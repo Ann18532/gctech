@@ -1,47 +1,50 @@
 const express = require('express');
-const session = require('express-session');
-const passport = require('passport');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const authRoutes = require('./core/auth/authRoutes');
-const hrRoutes = require('./core/hr/hrRoutes');
+const passport = require('passport');
+const connectDB = require('./db/connect');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+
+const authRoutes = require('./auth/authRoutes');
+const integrationRoutes = require('./integration/integrationRoutes');
+const leaveRoutes = require('./leaves/leaveRoutes');
 
 dotenv.config();
-require('./core/auth/googleStrategy'); // Setup Google OAuth2
+require('./auth/googleStrategy');
 
-const app = express(); // Initialize the app
-const PORT = process.env.PORT || 3000;
+const app = express();
+const PORT = process.env.PORT || 5000;
 
-const connectDB = require('./core/db/connect');
-const configRoutes = require('./core/config/configRoutes');
+connectDB();
 
-connectDB(); // MongoDB connection
-app.use('/api/config', configRoutes);
-
-
-// Middlewares
-app.use(cors({
-    origin: 'http://localhost:3000',
-    credentials: true
-  }));
-  
+app.use(cors());
 app.use(express.json());
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'devsecret',
-  resave: false,
-  saveUninitialized: false
-}));
+app.use(cookieParser());
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'your-default-secret', // Use a secure secret
+    resave: false, // Prevents unnecessary session saving
+    saveUninitialized: false, // Only saves sessions when necessary
+    cookie: { secure: false } // Set to `true` if using HTTPS
+  })
+);
+
 app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.session()); // Enables session support for Passport.js
 
 // Routes
 app.use('/auth', authRoutes);
-app.use('/api/hr', hrRoutes); // Moved here, after app initialization
+app.use('/api/integration', integrationRoutes);
+app.use('/api/leaves', leaveRoutes);
 
 app.get('/', (req, res) => {
-  res.send('🟢 Universal ERP Login Portal Running');
+  res.send('🟢 Universal ERP Platform Running');
 });
 
 app.listen(PORT, () => {
   console.log(`✅ Server running at http://localhost:${PORT}`);
 });
+
+module.exports = app;
