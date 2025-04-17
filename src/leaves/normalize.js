@@ -1,32 +1,27 @@
+const { aiMatchField } = require('../ai-tools/fieldMapper');
+
 function normalizeLeaveResponse(rawLeaves, provider) {
-  switch (provider) {
-    case 'oracle':
-      return rawLeaves.map(leave => ({
-        leave_id: leave.LeaveId || leave.id || leave.requestId,
-        leave_reason: leave.Reason || leave.leaveType,
-        leave_start: leave.StartDate,
-        leave_end: leave.EndDate,
-        status: leave.Status || leave.approvalStatus
-      }));
-    case 'sap':
-      return rawLeaves.map(leave => ({
-        leave_id: leave.RequestID,
-        leave_reason: leave.LeaveType,
-        leave_start: leave.StartDate,
-        leave_end: leave.EndDate,
-        status: leave.ApprovalStatus
-      }));
-    case 'bamboohr':
-      return rawLeaves.map(leave => ({
-        leave_id: leave.id,
-        leave_reason: leave.type,
-        leave_start: leave.start,
-        leave_end: leave.end,
-        status: leave.status
-      }));
-    default:
-      return [];
-  }
+  return rawLeaves.map(leave => {
+    const keys = Object.keys(leave);
+
+    const match_reason = aiMatchField("leave_reason", keys);
+    const match_start = aiMatchField("leave_start", keys);
+    const match_end = aiMatchField("leave_end", keys);
+    const match_status = aiMatchField("status", keys);
+    const match_name = aiMatchField("name", keys);
+    const match_email = aiMatchField("email", keys);
+
+    return {
+      leave_id:
+        leave.LeaveId || leave.RequestID || leave.id || leave.req_id || null,
+      leave_reason: leave[match_reason?.match] || '',
+      leave_start: leave[match_start?.match] || '',
+      leave_end: leave[match_end?.match] || '',
+      status: leave[match_status?.match] || '',
+      name: leave[match_name?.match] || '',
+      email: leave[match_email?.match] || ''
+    };
+  });
 }
 
 module.exports = { normalizeLeaveResponse };

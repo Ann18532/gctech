@@ -2,6 +2,7 @@
 const axios = require('axios');
 const { aiMatchField } = require('../../ai-tools/fieldMapper');
 const Leave = require('../leaveModel');
+const { OracleLeave } = require('../../integration/integrationModel');
 
 // Oracle Leave GET Adapter
 
@@ -21,7 +22,7 @@ const Leave = require('../leaveModel');
 
 async function getLeavesOracle(accessToken, userEmail) {
   console.log(userEmail); 
-  const records = await Leave.find({ email: userEmail, provider: "oracle" });
+  const records = await OracleLeave.find({ email: userEmail, provider: "oracle" });
   console.log("📦 Oracle DB records found:", records.length);
   return records.map(r => r.payload);
 }
@@ -51,20 +52,27 @@ async function getLeavesOracle(accessToken, userEmail) {
 //test
 
 async function createLeaveOracle(accessToken, universalLeave, userEmail) {
-  const targetFields = ["Reason", "LeaveType", "type", "StartDate", "start", "EndDate", "end", "Status", "ApprovalStatus", "status"];
+  const targetFields = ["staffMember", "staffEmail", "beginDate", "finishDate", "timeOffReason", "status"];
   const erpBody = {};
+  const missing = [];
 
-  for (const key in universalLeave) {
-    const match = aiMatchField(key, targetFields);
-    if (match && match.match) {
-      erpBody[match.match] = universalLeave[key];
-      console.log(`🧠 AI Mapped (Oracle): ${key} → ${match.match} (${match.confidence}%)`);
+  for (const erpField in targetFields) {
+      const match = aiMatchField(erpField, Object.keys(universalLeave));    if (match && match.match) {
+        if (!match || match.confidence < 0.75 || !universalLeave[match.match]) {
+          missing.push(erpField);
+        } else {
+          erpBody[erpField] = universalLeave[match.match];
+        }
+      console.log(`🧠 AI Mapped (Oracle): ${erpField} → ${match.match} (${match.confidence}%)`);
     }
   }
 
-  erpBody.Status = erpBody.Status || "Submitted";
 
-  const record = await Leave.create({ email: userEmail, provider: "oracle", payload: erpBody });
+  if (missing.length > 0) {
+    throw new Error(`Missing required ERP field mappings for: ${missing.join(", ")}`);
+  }
+
+  const record = await OracleLeave.create({ email: userEmail, provider: "oracle", payload: erpBody });
   return record.payload;
 }
 

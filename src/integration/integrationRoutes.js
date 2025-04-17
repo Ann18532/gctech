@@ -108,5 +108,33 @@ router.get('/callback/bamboohr', async (req, res) => {
 });
 
 
+router.post('/mock-connect', verifyToken, async (req, res) => {
+  console.log(req.user);
+  const { provider } = req.body;
+  const email = req.user.email;
+
+  if (!['oracle', 'sap', 'bamboohr'].includes(provider)) {
+    return res.status(400).json({ message: 'Unsupported ERP provider' });
+  }
+
+  try {
+    await Integration.findOneAndUpdate(
+      { email },
+      {
+        provider,
+        accessToken: `mock-token-${provider}`,
+        refreshToken: `mock-refresh-${provider}`,
+        baseURL: `https://${provider}.mock.api`
+      },
+      { upsert: true, new: true }
+    );
+
+    res.json({ message: `${provider} connected successfully` });
+  } catch (err) {
+    res.status(500).json({ message: 'Connection failed', error: err.message });
+  }
+});
+
+
 
 module.exports = router;

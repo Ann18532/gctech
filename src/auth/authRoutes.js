@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
+const { issueJWT, verifyToken } = require('../utils/authUtils');
 
 // Google OAuth2 login
 router.get('/login', passport.authenticate('google', {
@@ -9,31 +10,38 @@ router.get('/login', passport.authenticate('google', {
 }));
 
 // Callback from Google
-router.get('/callback',
-  passport.authenticate('google', { failureRedirect: '/auth/fail' }),
-  (req, res) => {
-    const token = jwt.sign(
-      {
-        email: req.user.email,
-        name: req.user.name
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
+router.get('/callback', passport.authenticate('google', {
+  failureRedirect: '/auth/failure',
+  session: false
+}), (req, res) => {
+  const jwt = issueJWT(req.user); // your JWT creation function
+  res.cookie('token', jwt, {
+    httpOnly: false,
+    secure: false,
+    sameSite: 'Lax'
+  });
 
-    // Redirect or render a page, or send token as query param
-    res.redirect(`/auth/token?token=${token}`);
-  }
-);
+  // Redirect to React frontend with optional token param
+  res.redirect(`http://localhost:5173/dashboard`);
+})
 
 // Success handler
 router.get('/success', (req, res) => {
-  if (!req.user) return res.status(401).send("Not authenticated");
+  const token = req.cookies.token;
 
-  res.json({
-    message: "Login successful",
-    user: req.user
-  });
+  if (!token) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  try {
+    const user = verifyToken(token); // your token verifier
+    res.json({
+      token,
+      user
+    });
+  } catch (err) {
+    res.status(401).json({ message: 'Invalid token' });
+  }
 });
 
 // Logout

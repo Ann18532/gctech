@@ -2,6 +2,7 @@
 const axios = require('axios');
 const { aiMatchField } = require('../../ai-tools/fieldMapper');
 const Leave = require('../leaveModel');
+const { BambooLeave } = require('../../integration/integrationModel');
 
 //real
 
@@ -38,33 +39,34 @@ const Leave = require('../leaveModel');
 
 // BambooHR Leave GET Adapter (Mocked)
 async function getLeavesBamboo(accessToken, baseURL, userEmail) {
-    const records = await Leave.find({ email: userEmail, provider: "bamboohr" });
+    const records = await BambooLeave.find({ email: userEmail, provider: "bamboohr" });
     return records.map(r => r.payload);
   }
   
   // BambooHR Leave POST Adapter (Mocked)
   async function createLeaveBamboo(accessToken, baseURL, universalLeave, userEmail) {
-    const targetFields = [
-      "id", "LeaveCode", "reason", "type",
-      "start", "StartDate", "from", "beginDate",
-      "end", "EndDate", "to", "finishDate",
-      "status", "approval", "LeaveStatus"
-    ];
+    const targetFields = ["staffMember", "staffEmail", "beginDate", "finishDate", "timeOffReason", "status"];
   
     const erpBody = {};
-    for (const key in universalLeave) {
-      const match = aiMatchField(key, targetFields);
-      if (match && match.match) {
-        erpBody[match.match] = universalLeave[key];
-        console.log(`🧠 AI Mapped (BambooHR): ${key} → ${match.match} (${match.confidence}%)`);
-      } else {
-        console.log(`⚠️ No BambooHR mapping found for ${key}`);
+    const missing = [];
+
+    for (const erpField in targetFields) {
+        const match = aiMatchField(erpField, Object.keys(universalLeave));    if (match && match.match) {
+          if (!match || match.confidence < 0.75 || !universalLeave[match.match]) {
+            missing.push(erpField);
+          } else {
+            erpBody[erpField] = universalLeave[match.match];
+          }
+        console.log(`🧠 AI Mapped (Oracle): ${erpField} → ${match.match} (${match.confidence}%)`);
       }
     }
   
-    erpBody.status = erpBody.status || "Pending";
   
-    const record = await Leave.create({
+    if (missing.length > 0) {
+      throw new Error(`Missing required ERP field mappings for: ${missing.join(", ")}`);
+    }
+  
+    const record = await BambooLeave.create({
       email: userEmail,
       provider: "bamboohr",
       payload: erpBody

@@ -2,6 +2,7 @@
 const axios = require('axios');
 const { aiMatchField } = require('../../ai-tools/fieldMapper');
 const Leave = require('../leaveModel');
+const { SapLeave } = require('../../integration/integrationModel');
 
 //real
 
@@ -41,33 +42,34 @@ const Leave = require('../leaveModel');
 // SAP Leave GET Adapter (Mocked)
 
 async function getLeavesSAP(accessToken, userEmail) {
-    const records = await Leave.find({ email: userEmail, provider: "sap" });
+    const records = await SapLeave.find({ email: userEmail, provider: "sap" });
     return records.map(r => r.payload);
   }
   
   // SAP Leave POST Adapter (Mocked)
   async function createLeaveSAP(accessToken, universalLeave, userEmail) {
-    const targetFields = [
-      "RequestID", "LeaveType", "LeaveReason", "Cause",
-      "StartDate", "from", "FromDate",
-      "EndDate", "to", "ToDate",
-      "ApprovalStatus", "status", "LeaveStatus"
-    ];
+    const targetFields = ["EmployeeName", "ContactEmail", "FromDate", "ToDate", "ReasonForLeave"];
   
     const erpBody = {};
-    for (const key in universalLeave) {
-      const match = aiMatchField(key, targetFields);
-      if (match && match.match) {
-        erpBody[match.match] = universalLeave[key];
-        console.log(`🧠 AI Mapped (SAP): ${key} → ${match.match} (${match.confidence}%)`);
-      } else {
-        console.log(`⚠️ No SAP mapping found for ${key}`);
+    const missing = [];
+
+    for (const erpField in targetFields) {
+        const match = aiMatchField(erpField, Object.keys(universalLeave));    if (match && match.match) {
+          if (!match || match.confidence < 0.75 || !universalLeave[match.match]) {
+            missing.push(erpField);
+          } else {
+            erpBody[erpField] = universalLeave[match.match];
+          }
+        console.log(`🧠 AI Mapped (Oracle): ${erpField} → ${match.match} (${match.confidence}%)`);
       }
     }
   
-    erpBody.ApprovalStatus = erpBody.ApprovalStatus || "Submitted";
   
-    const record = await Leave.create({
+    if (missing.length > 0) {
+      throw new Error(`Missing required ERP field mappings for: ${missing.join(", ")}`);
+    }
+  
+    const record = await SapLeave.create({
       email: userEmail,
       provider: "sap",
       payload: erpBody

@@ -1,0 +1,59 @@
+.erp-action-container {
+    height: 100vh;
+    width: 100vw;
+    background: linear-gradient(135deg, #1c1c2b, #2a2f45);
+    color: white;
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Segoe UI', sans-serif;
+    box-sizing: border-box;
+  }
+  
+  .erp-action-container h1 {
+    font-size: 2.8rem;
+    color: #00f6ff;
+    margin-bottom: 60px;
+    text-shadow: 0 0 12px #00f6ff88;
+  }
+  
+  .erp-action-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 60px;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+  }
+  
+  .erp-action-card {
+    background: rgba(30, 30, 50, 0.95);
+    padding: 40px 30px;
+    width: 400px;
+    height: 250px;
+    border-radius: 18px;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 10px 25px rgba(0, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .erp-action-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+  }
+  
+  .erp-action-card h2 {
+    font-size: 1.6rem;
+    margin-bottom: 12px;
+    color: #ffffff;
+  }
+  
+  .erp-action-card p {
+    font-size: 1.05rem;
+    color: #d0d0d0;
+  }
+  

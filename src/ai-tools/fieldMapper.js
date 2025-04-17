@@ -1,20 +1,26 @@
 //switch to real ml model next
 // Simulated embedding-based similarity scorer for demo purposes
-const mockFieldVectors = {
+const universalVectors = {
     leave_reason: [0.1, 0.8, 0.3],
     leave_start: [0.5, 0.2, 0.6],
     leave_end: [0.4, 0.3, 0.7],
-    status: [0.6, 0.7, 0.1]
+    status: [0.6, 0.7, 0.1],
+    name: [0.2, 0.9, 0.5],
+    email: [0.1, 0.2, 0.9]
   };
   
-  const erpFieldVectors = {
+  const erpVectors = {
     Reason: [0.11, 0.82, 0.29],
     LeaveType: [0.09, 0.79, 0.31],
     type: [0.15, 0.77, 0.34],
     StartDate: [0.51, 0.18, 0.62],
     EndDate: [0.42, 0.31, 0.73],
     Status: [0.62, 0.69, 0.12],
-    ApprovalStatus: [0.58, 0.71, 0.09]
+    ApprovalStatus: [0.58, 0.71, 0.09],
+    FullName: [0.21, 0.88, 0.48],
+    EmployeeName: [0.23, 0.90, 0.47],
+    email: [0.1, 0.2, 0.9],
+    EmailID: [0.11, 0.19, 0.91]
   };
   
   function cosineSimilarity(a, b) {
@@ -25,14 +31,14 @@ const mockFieldVectors = {
   }
   
   function aiMatchField(universalField, erpFields = []) {
-    const targetVec = mockFieldVectors[universalField];
+    const targetVec = universalVectors[universalField];
     if (!targetVec) return null;
   
     let bestField = null;
     let bestScore = -1;
   
     for (const field of erpFields) {
-      const erpVec = erpFieldVectors[field];
+      const erpVec = erpVectors[field];
       if (!erpVec) continue;
       const score = cosineSimilarity(targetVec, erpVec);
       if (score > bestScore) {
