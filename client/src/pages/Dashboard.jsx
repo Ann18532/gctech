@@ -1,7 +1,7 @@
 import './Dashboard.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/navbar.jsx';
+import Navbar from '../components/Navbar.jsx';
 
 
 
@@ -29,8 +29,9 @@ function Dashboard() {
     }
   };
   
-  // <Navbar />
   return (
+    <>
+    <Navbar />
     <div className="dashboard-container">
       <h1 className="dashboard-title">Connect Your ERP System</h1>
       <div className="erp-grid">
@@ -46,6 +47,7 @@ function Dashboard() {
         ))}
       </div>
     </div>
+    </>
   );
 }
 

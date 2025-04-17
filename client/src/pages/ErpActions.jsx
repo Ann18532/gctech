@@ -1,5 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import './ErpActions.css';
+import Navbar from '../components/Navbar.jsx';
+
 
 function ErpActions() {
   const { provider } = useParams();
@@ -8,6 +10,8 @@ function ErpActions() {
   const providerName = provider.charAt(0).toUpperCase() + provider.slice(1);
 
   return (
+    <>
+    <Navbar />
     <div className="erp-action-container">
       <h1>{providerName} Leave Management</h1>
       <div className="erp-action-grid">
@@ -20,7 +24,8 @@ function ErpActions() {
           <p>Retrieve normalized leave records from the {providerName} ERP.</p>
         </div>
       </div>
-    </div>
+      </div>
+      </>
   );
 }
 

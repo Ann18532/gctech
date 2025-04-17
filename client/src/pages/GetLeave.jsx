@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './GetLeave.css';
+import Navbar from '../components/Navbar.jsx';
+
 
 function GetLeave() {
   const [leaves, setLeaves] = useState([]);
@@ -24,6 +26,8 @@ function GetLeave() {
   }, []);
 
   return (
+    <>
+    <Navbar />
     <div className="getleave-wrapper">
       <div className="getleave-card">
         <h1>📤 API Endpoint</h1>
@@ -50,7 +54,8 @@ function GetLeave() {
           )}
         </div>
       </div>
-    </div>
+      </div>
+      </>
   );
 }
 

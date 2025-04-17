@@ -53,7 +53,7 @@ async function getLeavesSAP(accessToken, userEmail) {
     const missing = [];
 
     for (const erpField of targetFields) {
-      const match = await aiMatchField(erpField, Object.keys(universalLeave), 0.4);
+      const match = await aiMatchField(erpField, Object.keys(universalLeave), 0);
       console.log(match);
       if (match && match.match) {
           if (!match || !universalLeave[match.match]) {

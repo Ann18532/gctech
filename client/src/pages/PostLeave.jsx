@@ -1,11 +1,15 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import './PostLeave.css';
+import Navbar from '../components/Navbar.jsx';
+
 
 function PostLeave() {
   const { provider } = useParams();
   const navigate = useNavigate();
 
   return (
+    <>
+    <Navbar />
     <div className="postleave-wrapper">
       <div className="postleave-card-centered">
         <h1 className="postleave-title">Submit Leave via Unify</h1>
@@ -50,7 +54,8 @@ function PostLeave() {
           ➕ Fill Leave Form
         </button>
       </div>
-    </div>
+      </div>
+      </>
   );
 }
 

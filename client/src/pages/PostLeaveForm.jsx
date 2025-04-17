@@ -2,6 +2,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
 import './PostLeaveForm.css';
+import Navbar from '../components/Navbar.jsx';
+
 
 
 function PostLeaveForm() {
@@ -55,6 +57,8 @@ function PostLeaveForm() {
   };
 
   return (
+    <>
+    <Navbar />
     <div className="leaveform-wrapper">
       <div className="leaveform-card">
         <h1>Fill Leave Request</h1>
@@ -84,7 +88,8 @@ function PostLeaveForm() {
 
         {status && <p className="status">{status}</p>}
       </div>
-    </div>
+      </div>
+      </>
   );
 }
 
