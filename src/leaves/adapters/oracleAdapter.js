@@ -53,7 +53,7 @@ async function getLeavesOracle(accessToken, userEmail) {
 
 async function createLeaveOracle(accessToken, universalLeave, userEmail) {
   const targetFields = [
-    "FullName", "EmailID", "StartDate", "EndDate", "LeaveReason", "Approved"
+    "FullName", "EmailID", "StartDate", "EndDate", "LeaveReason"
   ];
   const unifields = Object.keys(universalLeave);
   const erpBody = {};

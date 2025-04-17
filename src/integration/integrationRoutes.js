@@ -6,6 +6,31 @@ const oracleOAuth = require('./oracleOAuth');
 const sapOAuth = require('./sapOAuth'); 
 const bambooOAuth = require('./bambooOAuth'); 
 
+
+
+/**
+ * @swagger
+ * /api/integrations/connect:
+ *   post:
+ *     summary: Initiates OAuth2 connection with ERP (e.g. Oracle)
+ *     tags: [Integration]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               provider:
+ *                 type: string
+ *                 enum: [oracle, sap, bamboohr]
+ *     responses:
+ *       200:
+ *         description: Returns redirect URL for ERP OAuth2
+ */
+
 // 1. Start OAuth2 connection for ERP (Oracle)
 router.post('/connect', verifyToken, async (req, res) => {
   console.log(req);
@@ -34,6 +59,30 @@ router.post('/connect', verifyToken, async (req, res) => {
     res.status(500).json({ message: 'Failed to generate ERP auth URL', error: err.message });
   }
 });
+
+
+
+/**
+ * @swagger
+ * /api/integrations/callback/oracle:
+ *   get:
+ *     summary: OAuth2 callback handler for Oracle ERP
+ *     tags: [Integration]
+ *     parameters:
+ *       - name: code
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - name: state
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Oracle ERP connected
+ */
 
 // 2. OAuth2 callback handler for Oracle
 router.get('/callback/oracle', async (req, res) => {
@@ -66,6 +115,30 @@ router.get('/callback/oracle', async (req, res) => {
   }
 });
 
+
+
+/**
+ * @swagger
+ * /api/integrations/callback/sap:
+ *   get:
+ *     summary: OAuth2 callback handler for SAP ERP
+ *     tags: [Integration]
+ *     parameters:
+ *       - name: code
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - name: state
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: SAP ERP connected
+ */
+
 // SAP ERP OAuth2 callback
 router.get('/callback/sap', async (req, res) => {
   const { code, state } = req.query;
@@ -86,6 +159,30 @@ router.get('/callback/sap', async (req, res) => {
     res.status(500).json({ message: 'OAuth callback failed', error: err.message });
   }
 });
+
+
+
+/**
+ * @swagger
+ * /api/integrations/callback/bamboo:
+ *   get:
+ *     summary: OAuth2 callback handler for BambooHR
+ *     tags: [Integration]
+ *     parameters:
+ *       - name: code
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - name: state
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: BambooHR ERP connected
+ */
 
 // BambooHR ERP OAuth2 callback
 router.get('/callback/bamboohr', async (req, res) => {
