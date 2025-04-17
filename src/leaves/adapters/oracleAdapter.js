@@ -48,11 +48,12 @@ async function getLeavesOracle(accessToken, userEmail) {
 // }
 
 
+
 //test
 
 async function createLeaveOracle(accessToken, universalLeave, userEmail) {
   const targetFields = [
-    "FullName", "EmailID", "StartDate", "EndDate", "LeaveReason"
+    "FullName", "EmailID", "StartDate", "EndDate", "LeaveReason", "Approved"
   ];
   const unifields = Object.keys(universalLeave);
   const erpBody = {};
@@ -61,7 +62,7 @@ async function createLeaveOracle(accessToken, universalLeave, userEmail) {
 
   for (const erpField of targetFields) {
 
-    const match = await aiMatchField(erpField, unifields);
+    const match = await aiMatchField(erpField, unifields, 0.40);
     console.log(match.match);
     if (match && match.match) {
         if (!match || !universalLeave[match.match]) {
@@ -70,6 +71,9 @@ async function createLeaveOracle(accessToken, universalLeave, userEmail) {
           erpBody[erpField] = universalLeave[match.match];
         }
       console.log(`🧠 AI Mapped (Oracle): ${erpField} → ${match.match} (${match.confidence}%)`);
+    }
+    else {
+      missing.push(erpField);
     }
   }
 

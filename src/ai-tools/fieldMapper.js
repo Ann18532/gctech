@@ -44,7 +44,7 @@ function preprocess(text) {
     return text.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase().trim();
 }
   
-async function aiMatchField(erpField, fields = universalFields, threshold = 0) {
+async function aiMatchField(erpField, fields = universalFields, threshold = 0.4) {
     const erpVec = (await fetchEmbeddings([preprocess(erpField)]))[0];
     // console.log(erpVec);
     const universalVecs = await loadUniversalEmbeddings();
@@ -62,7 +62,8 @@ async function aiMatchField(erpField, fields = universalFields, threshold = 0) {
                 bestField = field;
             }
     }
-    console.log(`Best match for ${erpField}: ${bestField} (${bestScore})`);
+  console.log(`Best match for ${erpField}: ${bestField} (${bestScore})`);
+  // console.log(threshold);
     const confidence = Math.round(bestScore * 1000) / 10;
     return bestScore >= threshold ? { match: bestField, confidence } : null;
   }

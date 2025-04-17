@@ -3,9 +3,11 @@ import { useState } from 'react';
 import axios from 'axios';
 import './PostLeaveForm.css';
 
+
 function PostLeaveForm() {
   const { provider } = useParams();
   const navigate = useNavigate();
+  const [popup, setPopup] = useState({ message: '', type: '' }); // type: 'error' | 'success'
 
   const [formData, setFormData] = useState({
     name: '',
@@ -25,24 +27,31 @@ function PostLeaveForm() {
   const handleSubmit = async e => {
     e.preventDefault();
     setStatus('Submitting...');
-
+  
     try {
-      const response = await axios.post(
-        'http://localhost:5000/api/leaves',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            },
-            withCredentials: true
-        }
-      );
-      setStatus('✅ Leave submitted successfully!');
-      setTimeout(() => navigate(`/erp/${provider}`), 1500);
+      const res = await axios.post('http://localhost:5000/api/leaves', formData, {
+        withCredentials: true
+      });
+  
+      setPopup({ message: '✅ Leave submitted successfully!', type: 'success' });
+  
+      setTimeout(() => {
+        setPopup({ message: '', type: '' });
+        navigate(`/erp/${provider}`);
+      }, 2000);
     } catch (err) {
-      setStatus('❌ Failed to submit leave');
-      console.error(err);
+      const message =
+        err.response?.data?.error ||
+        err.response?.data?.message ||   // ✅ This line shows the actual Error thrown
+        '❌ Failed to submit leave';
+    
+      setPopup({ message, type: 'error' });
+    
+      setTimeout(() => setPopup({ message: '', type: '' }), 4000);
     }
+  
+    // ✅ Reset status regardless of outcome
+    setStatus('');
   };
 
   return (
@@ -50,6 +59,11 @@ function PostLeaveForm() {
       <div className="leaveform-card">
         <h1>Fill Leave Request</h1>
         <form onSubmit={handleSubmit}>
+          {popup.message && (
+            <div className={`popup ${popup.type}`}>
+              {popup.message}
+            </div>
+          )}
           <label>Full Name </label>
           <input type="text" name="name" value={formData.name} onChange={handleChange} />
 

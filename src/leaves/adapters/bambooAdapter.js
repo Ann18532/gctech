@@ -50,13 +50,17 @@ async function getLeavesBamboo(accessToken, baseURL, userEmail) {
     const missing = [];
 
     for (const erpField of targetFields) {
-        const match = aiMatchField(erpField, Object.keys(universalLeave));    if (match && match.match) {
+      const match = await aiMatchField(erpField, Object.keys(universalLeave));
+      if (match && match.match) {
           if (!match || !universalLeave[match.match]) {
             missing.push(erpField);
           } else {
             erpBody[erpField] = universalLeave[match.match];
           }
         console.log(`🧠 AI Mapped (Oracle): ${erpField} → ${match.match} (${match.confidence}%)`);
+      }
+      else {
+        missing.push(erpField);
       }
     }
   

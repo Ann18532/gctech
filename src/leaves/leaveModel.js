@@ -10,6 +10,7 @@ const oracleLeaveSchema = new mongoose.Schema({
     StartDate: String,
     EndDate: String,
     LeaveReason: String,
+    Approved: String
   }
 }, { timestamps: true });
 
@@ -22,7 +23,8 @@ const sapLeaveSchema = new mongoose.Schema({
     ContactEmail: String,
     FromDate: String,
     ToDate: String,
-    ReasonForLeave: String
+    ReasonForLeave: String,
+    avdf : String
   }
 }, { timestamps: true });
 

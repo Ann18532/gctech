@@ -116,3 +116,27 @@
   .field-dot.placeholder {
     visibility: hidden;
   }
+
+  .popup {
+    margin-top: 20px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    animation: fadein 0.3s ease;
+  }
+  
+  .popup.success {
+    background-color: #d4ffe4;
+    color: #047857;
+  }
+  
+  .popup.error {
+    background-color: #ffe4e4;
+    color: #b91c1c;
+  }
+  
+  @keyframes fadein {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  

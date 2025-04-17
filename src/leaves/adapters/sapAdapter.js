@@ -47,19 +47,24 @@ async function getLeavesSAP(accessToken, userEmail) {
   
   // SAP Leave POST Adapter (Mocked)
   async function createLeaveSAP(accessToken, universalLeave, userEmail) {
-    const targetFields = ["EmployeeName", "ContactEmail", "FromDate", "ToDate", "ReasonForLeave"];
+    const targetFields = ["EmployeeName", "ContactEmail", "FromDate", "ToDate", "ReasonForLeave", ""];
   
     const erpBody = {};
     const missing = [];
 
     for (const erpField of targetFields) {
-        const match = aiMatchField(erpField, Object.keys(universalLeave));    if (match && match.match) {
+      const match = await aiMatchField(erpField, Object.keys(universalLeave), 0.4);
+      console.log(match);
+      if (match && match.match) {
           if (!match || !universalLeave[match.match]) {
             missing.push(erpField);
           } else {
             erpBody[erpField] = universalLeave[match.match];
           }
         console.log(`🧠 AI Mapped (Oracle): ${erpField} → ${match.match} (${match.confidence}%)`);
+      }
+      else {
+        missing.push(erpField);
       }
     }
   
