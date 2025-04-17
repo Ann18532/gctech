@@ -23,7 +23,7 @@ async function getLeavesOracle(accessToken, userEmail) {
   console.log(userEmail); 
   const records = await OracleLeave.find({ email: userEmail, provider: "oracle" });
   console.log("📦 Oracle DB records found:", records.length);
-  return records.map(r => r.payload);
+  return records;
 }
   
 

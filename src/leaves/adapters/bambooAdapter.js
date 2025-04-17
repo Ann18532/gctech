@@ -39,7 +39,7 @@ const { BambooLeave } = require('../leaveModel');
 // BambooHR Leave GET Adapter (Mocked)
 async function getLeavesBamboo(accessToken, baseURL, userEmail) {
     const records = await BambooLeave.find({ email: userEmail, provider: "bamboohr" });
-    return records.map(r => r.payload);
+    return records;
   }
   
   // BambooHR Leave POST Adapter (Mocked)
@@ -51,7 +51,7 @@ async function getLeavesBamboo(accessToken, baseURL, userEmail) {
 
     for (const erpField of targetFields) {
         const match = aiMatchField(erpField, Object.keys(universalLeave));    if (match && match.match) {
-          if (!match || match.confidence < 0.75 || !universalLeave[match.match]) {
+          if (!match || !universalLeave[match.match]) {
             missing.push(erpField);
           } else {
             erpBody[erpField] = universalLeave[match.match];

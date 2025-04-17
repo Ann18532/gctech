@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { verifyToken } = require('../auth/authMiddleware');
 const Integration = require('../integration/integrationModel');
-const { normalizeLeaveResponse } = require('./normalize');
+const { aiNormalizeResponse } = require('../ai-tools/responseMapper');
+
 
 const { createLeaveOracle, getLeavesOracle } = require('./adapters/oracleAdapter');
 const { createLeaveSAP, getLeavesSAP } = require('./adapters/sapAdapter');
@@ -53,8 +54,11 @@ router.get('/', verifyToken, async (req, res) => {
     } else {
       return res.status(400).json({ message: 'Unsupported ERP provider' });
     }
+    // console.log(rawLeaves);
+    const leaves = await Promise.all(
+      rawLeaves.map(entry => aiNormalizeResponse(entry))
+    );
 
-    const leaves = normalizeLeaveResponse(rawLeaves, integration.provider);
     res.json({ data: leaves });
   } catch (err) {
     res.status(500).json({ message: 'Error retrieving leaves', error: err.message });

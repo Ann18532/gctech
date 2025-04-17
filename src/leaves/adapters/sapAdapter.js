@@ -1,7 +1,7 @@
 // File: src/leaves/adapters/sapAdapter.js
 const axios = require('axios');
 const { aiMatchField } = require('../../ai-tools/fieldMapper');
-const SapLeave = require('../leaveModel');
+const { SapLeave } = require('../leaveModel');
 
 //real
 
@@ -42,7 +42,7 @@ const SapLeave = require('../leaveModel');
 
 async function getLeavesSAP(accessToken, userEmail) {
     const records = await SapLeave.find({ email: userEmail, provider: "sap" });
-    return records.map(r => r.payload);
+    return records;
   }
   
   // SAP Leave POST Adapter (Mocked)
@@ -54,7 +54,7 @@ async function getLeavesSAP(accessToken, userEmail) {
 
     for (const erpField of targetFields) {
         const match = aiMatchField(erpField, Object.keys(universalLeave));    if (match && match.match) {
-          if (!match || match.confidence < 0.75 || !universalLeave[match.match]) {
+          if (!match || !universalLeave[match.match]) {
             missing.push(erpField);
           } else {
             erpBody[erpField] = universalLeave[match.match];

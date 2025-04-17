@@ -44,7 +44,7 @@ function preprocess(text) {
     return text.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase().trim();
 }
   
-async function aiMatchField(erpField, universalFields, threshold = 0) {
+async function aiMatchField(erpField, fields = universalFields, threshold = 0) {
     const erpVec = (await fetchEmbeddings([preprocess(erpField)]))[0];
     // console.log(erpVec);
     const universalVecs = await loadUniversalEmbeddings();
@@ -53,10 +53,10 @@ async function aiMatchField(erpField, universalFields, threshold = 0) {
     let bestField = null;
     let bestScore = -1;
   
-      for (const field of universalFields) {
+      for (const field of fields) {
             // console.log(field);
           const score = cosineSimilarity(universalVecs[field], erpVec);
-          // console.log(score);
+          console.log(score);
             if (score > bestScore) {
                 bestScore = score;
                 bestField = field;
