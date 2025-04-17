@@ -1,8 +1,7 @@
 // File: src/leaves/adapters/bambooAdapter.js
 const axios = require('axios');
 const { aiMatchField } = require('../../ai-tools/fieldMapper');
-const Leave = require('../leaveModel');
-const { BambooLeave } = require('../../integration/integrationModel');
+const { BambooLeave } = require('../leaveModel');
 
 //real
 
@@ -50,7 +49,7 @@ async function getLeavesBamboo(accessToken, baseURL, userEmail) {
     const erpBody = {};
     const missing = [];
 
-    for (const erpField in targetFields) {
+    for (const erpField of targetFields) {
         const match = aiMatchField(erpField, Object.keys(universalLeave));    if (match && match.match) {
           if (!match || match.confidence < 0.75 || !universalLeave[match.match]) {
             missing.push(erpField);

@@ -50,17 +50,17 @@ function PostLeaveForm() {
       <div className="leaveform-card">
         <h1>Fill Leave Request</h1>
         <form onSubmit={handleSubmit}>
-          <label>Full Name ✳️</label>
-          <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+          <label>Full Name </label>
+          <input type="text" name="name" value={formData.name} onChange={handleChange} />
 
-          <label>Email ✳️</label>
-          <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+          <label>Email </label>
+          <input type="email" name="email" value={formData.email} onChange={handleChange} />
 
-          <label>Leave Start ✳️</label>
-          <input type="date" name="leave_start" value={formData.leave_start} onChange={handleChange} required />
+          <label>Leave Start </label>
+          <input type="date" name="leave_start" value={formData.leave_start} onChange={handleChange} />
 
-          <label>Leave End ✳️</label>
-          <input type="date" name="leave_end" value={formData.leave_end} onChange={handleChange} required />
+          <label>Leave End </label>
+          <input type="date" name="leave_end" value={formData.leave_end} onChange={handleChange} />
 
           <label>Leave Reason</label>
           <textarea name="leave_reason" value={formData.leave_reason} onChange={handleChange} rows="3" />

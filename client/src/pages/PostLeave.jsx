@@ -19,27 +19,27 @@ function PostLeave() {
           <h2>📝 Fields</h2>
           <div className="field-table">
             <div className="field-row">
-              <span className="field-dot" title="Required">•</span>
+              {/* <span className="field-dot" title="Required">•</span> */}
               <span className="field-name">name</span>
               <span className="field-desc">Employee full name</span>
             </div>
             <div className="field-row">
-              <span className="field-dot" title="Required">•</span>
+              {/* <span className="field-dot" title="Required">•</span> */}
               <span className="field-name">email</span>
               <span className="field-desc">Employee email address</span>
             </div>
             <div className="field-row">
-              <span className="field-dot" title="Required">•</span>
+              {/* <span className="field-dot" title="Required">•</span> */}
               <span className="field-name">leave_start</span>
               <span className="field-desc">Start date of leave</span>
             </div>
             <div className="field-row">
-              <span className="field-dot" title="Required">•</span>
+              {/* <span className="field-dot" title="Required">•</span> */}
               <span className="field-name">leave_end</span>
               <span className="field-desc">End date of leave</span>
             </div>
             <div className="field-row">
-              <span className="field-dot placeholder"></span>
+              {/* <span className="field-dot placeholder"></span> */}
               <span className="field-name">leave_reason</span>
               <span className="field-desc">Reason for leave</span>
             </div>

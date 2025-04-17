@@ -17,7 +17,8 @@ router.post('/', verifyToken, async (req, res) => {
 
     let result;
     const universalPayload = req.body; // trusted universal field names
-
+    console.log(integration.provider);
+    console.log(universalPayload);
     if (integration.provider === 'oracle') {
       result = await createLeaveOracle(integration.accessToken, universalPayload, user.email);
     } else if (integration.provider === 'sap') {

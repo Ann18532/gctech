@@ -1,8 +1,7 @@
 // File: src/leaves/adapters/oracleAdapter.js
 const axios = require('axios');
 const { aiMatchField } = require('../../ai-tools/fieldMapper');
-const Leave = require('../leaveModel');
-const { OracleLeave } = require('../../integration/integrationModel');
+const {OracleLeave }= require('../leaveModel');
 
 // Oracle Leave GET Adapter
 
@@ -52,13 +51,20 @@ async function getLeavesOracle(accessToken, userEmail) {
 //test
 
 async function createLeaveOracle(accessToken, universalLeave, userEmail) {
-  const targetFields = ["staffMember", "staffEmail", "beginDate", "finishDate", "timeOffReason", "status"];
+  const targetFields = [
+    "FullName", "EmailID", "StartDate", "EndDate", "LeaveReason"
+  ];
+  const unifields = Object.keys(universalLeave);
   const erpBody = {};
   const missing = [];
+  console.log(Object.keys(universalLeave));
 
-  for (const erpField in targetFields) {
-      const match = aiMatchField(erpField, Object.keys(universalLeave));    if (match && match.match) {
-        if (!match || match.confidence < 0.75 || !universalLeave[match.match]) {
+  for (const erpField of targetFields) {
+
+    const match = await aiMatchField(erpField, unifields);
+    console.log(match.match);
+    if (match && match.match) {
+        if (!match || !universalLeave[match.match]) {
           missing.push(erpField);
         } else {
           erpBody[erpField] = universalLeave[match.match];
@@ -67,12 +73,14 @@ async function createLeaveOracle(accessToken, universalLeave, userEmail) {
     }
   }
 
-
+  console.log(erpBody);
   if (missing.length > 0) {
     throw new Error(`Missing required ERP field mappings for: ${missing.join(", ")}`);
   }
-
+  console.log(userEmail, "oracle", erpBody);
+  
   const record = await OracleLeave.create({ email: userEmail, provider: "oracle", payload: erpBody });
+  console.log("Record created:", record);
   return record.payload;
 }
 

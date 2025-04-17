@@ -8,12 +8,13 @@ const bambooOAuth = require('./bambooOAuth');
 
 // 1. Start OAuth2 connection for ERP (Oracle)
 router.post('/connect', verifyToken, async (req, res) => {
+  console.log(req);
   const { provider } = req.body;
   const email = req.user.email;
 
   try {
     let authURL;
-
+    console.log(provider);
     switch (provider?.toLowerCase()) {
       case 'oracle':
         authURL = oracleOAuth.generateAuthURL(email);

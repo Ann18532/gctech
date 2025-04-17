@@ -1,8 +1,7 @@
 // File: src/leaves/adapters/sapAdapter.js
 const axios = require('axios');
 const { aiMatchField } = require('../../ai-tools/fieldMapper');
-const Leave = require('../leaveModel');
-const { SapLeave } = require('../../integration/integrationModel');
+const SapLeave = require('../leaveModel');
 
 //real
 
@@ -53,7 +52,7 @@ async function getLeavesSAP(accessToken, userEmail) {
     const erpBody = {};
     const missing = [];
 
-    for (const erpField in targetFields) {
+    for (const erpField of targetFields) {
         const match = aiMatchField(erpField, Object.keys(universalLeave));    if (match && match.match) {
           if (!match || match.confidence < 0.75 || !universalLeave[match.match]) {
             missing.push(erpField);

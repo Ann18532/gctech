@@ -9,6 +9,7 @@ const verifyToken = (req, res, next) => {
   console.log(token);
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'devsecret');
+    console.log("✅ Token verified:", decoded);
     req.user = { email: decoded.email?.trim() };
     next();
   } catch (err) {

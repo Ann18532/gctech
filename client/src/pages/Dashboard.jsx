@@ -1,6 +1,8 @@
 import './Dashboard.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/navbar.jsx';
+
 
 
 
@@ -26,7 +28,8 @@ function Dashboard() {
       alert(`Connection failed for ${provider.toUpperCase()}`);
     }
   };
-
+  
+  // <Navbar />
   return (
     <div className="dashboard-container">
       <h1 className="dashboard-title">Connect Your ERP System</h1>

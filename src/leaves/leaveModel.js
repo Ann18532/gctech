@@ -1,11 +1,46 @@
-// File: src/leaves/leaveModel.js
 const mongoose = require('mongoose');
-const { set } = require('../app');
 
-const LeaveSchema = new mongoose.Schema({
-  email: { type: String, required: true, set : (v) => v.trim() },
-  provider: { type: String, required: true },
-  payload: { type: Object, required: true }
+// Oracle ERP Leave Schema
+const oracleLeaveSchema = new mongoose.Schema({
+  email: String,
+  provider: { type: String, default: 'oracle' },
+  payload: {
+    FullName: String,
+    EmailID: String,
+    StartDate: String,
+    EndDate: String,
+    LeaveReason: String,
+  }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Leave', LeaveSchema);
+// SAP ERP Leave Schema
+const sapLeaveSchema = new mongoose.Schema({
+  email: String,
+  provider: { type: String, default: 'sap' },
+  payload: {
+    EmployeeName: String,
+    ContactEmail: String,
+    FromDate: String,
+    ToDate: String,
+    ReasonForLeave: String
+  }
+}, { timestamps: true });
+
+// BambooHR ERP Leave Schema
+const bambooLeaveSchema = new mongoose.Schema({
+  email: String,
+  provider: { type: String, default: 'bamboohr' },
+  payload: {
+    staffMember: String,
+    staffEmail: String,
+    beginDate: String,
+    finishDate: String,
+    timeOffReason: String,
+  }
+}, { timestamps: true });
+
+module.exports = {
+  OracleLeave: mongoose.model('OracleLeave', oracleLeaveSchema),
+  SapLeave: mongoose.model('SapLeave', sapLeaveSchema),
+  BambooLeave: mongoose.model('BambooLeave', bambooLeaveSchema)
+};

@@ -46,9 +46,9 @@ router.get('/success', (req, res) => {
 
 // Logout
 router.get('/logout', (req, res) => {
-  req.logout(err => {
-    if (err) return res.status(500).send("Logout failed");
-    res.send("Logged out");
+  res.clearCookie('token');
+  req.logout(() => {
+    res.json({ message: 'Logged out' });
   });
 });
 
