@@ -33,7 +33,10 @@ Unify is a smart, scalable, and extensible integration system designed to act as
 ```
 universal-erp-framework/
 ├── src/
-│   ├── core/              # Auth, ERP, Docs, Config
+│   ├── auth/              # Authenthication, Google OAuth2
+|   ├── db/                # Database Connection Details
+|   ├── docs/              # Auto Generated Swagger Docs
+|   ├── integration/       # Routes for Security Configuration between ERP and Client
 │   ├── ai-tools/          # Embedding, Matching Logic
 │   ├── leaves/            # POST/GET routes + Adapters
 │   ├── maintenance/       # Drift detection & mutation toggles
@@ -41,7 +44,6 @@ universal-erp-framework/
 ├── public/                # Frontend assets
 ├── client/                # React frontend
 ├── .env                   # Secrets & config
-├── swagger/               # Auto-generated Swagger docs
 ```
 
 ---
